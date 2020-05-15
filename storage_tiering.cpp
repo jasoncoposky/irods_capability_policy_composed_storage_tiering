@@ -295,7 +295,7 @@ namespace irods {
 
     std::string storage_tiering::get_data_movement_parameters_for_resource(
             const std::string& _resource_name) {
-        std::string params = "<INST_NAME>" + config_.instance_name + "</INST_NAME>";
+        std::string params = "<INST_NAME>irods_rule_engine_plugin-cpp_default_policy-instance</INST_NAME>";
 
         // if metadata is not present an irods::exception is thrown
         // which is ignored in the presence of strong defaults
@@ -675,33 +675,19 @@ namespace irods {
         {
             {"policy", "irods_policy_execute_rule"},
             {"payload", {
-                    {"policy_to_invoke", policy::data_movement},
+                    {"policy_to_invoke", "irods_policy_data_replication"},
                     {"parameters", {
                             {"user_name", _user_name},
                             {"group_name", _group_name},
-                            {"object_path", _object_path},
+                            {"logical_path", _object_path},
                             {"source_resource", _source_resource},
                             {"destination_resource", _destination_resource}
                         }
                     },
-                    {"configuration", ""}
+                    {"configuration", {}}
                 }
             }
         };
-#if 0
-        using json = nlohmann::json;
-        json rule_obj;
-        rule_obj["rule-engine-operation"]     = policy::data_movement;
-        rule_obj["rule-engine-instance-name"] = _plugin_instance_name;
-        rule_obj["group-name"]                = _group_name;
-        rule_obj["object-path"]               = _object_path;
-        rule_obj["user-name"]                 = _user_name;
-        rule_obj["source-replica-number"]     = _source_replica_number;
-        rule_obj["source-resource"]           = _source_resource;
-        rule_obj["destination-resource"]      = _destination_resource;
-        rule_obj["preserve-replicas"]         = _preserve_replicas,
-        rule_obj["verification-type"]         = _verification_type;
-#endif
 
         const auto delay_err = _delayExec(
                                    rule_obj.dump().c_str(),
